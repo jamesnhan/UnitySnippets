@@ -42,8 +42,6 @@ public class RTSUnitSelection : MonoBehaviour {
 	}
 	
 	void OnMouseUp() {
-		// Do Selection
-		
 		// Destroy the selection box so it doesn't linger on screen
 		GameObject.DestroyObject(SelectionBoxInstance);
 	}

@@ -29,15 +29,15 @@ public class RTSCameraMovement : MonoBehaviour {
 	private const KeyCode ANGLERIGHTKEY = KeyCode.Delete;
 
 	void Start() {
-		DEFAULTFOV = Camera.main.fieldOfView;
-		DEFAULTZOOM = Camera.main.transform.eulerAngles.x;
-		DEFAULTROT = Camera.main.transform.eulerAngles.y;
+		DEFAULTFOV = camera.fieldOfView;
+		DEFAULTZOOM = camera.transform.eulerAngles.x;
+		DEFAULTROT = camera.transform.eulerAngles.y;
 	}
 
 	// Update is called once per frame
 	void Update() {
 		// The camera's X rotation in radians
-		float CameraAngleFromPerpendicular = Camera.main.transform.eulerAngles.x * Mathf.PI / 180.0f;
+		float CameraAngleFromPerpendicular = camera.transform.eulerAngles.x * Mathf.PI / 180.0f;
 
 		// Get the input data in the respective axes
 		float xAxisValue = Input.GetAxis("Horizontal");
@@ -47,8 +47,8 @@ public class RTSCameraMovement : MonoBehaviour {
 		float zAxisValue = Input.GetAxis("Vertical") * Mathf.Cos(CameraAngleFromPerpendicular);
 
 		// Check that there is a current camera and then transform it to the new vector
-	    if(Camera.main != null){
-	        Camera.main.transform.Translate(new Vector3(xAxisValue, yAxisValue, zAxisValue));
+	    if(camera != null){
+	        camera.transform.Translate(new Vector3(xAxisValue, yAxisValue, zAxisValue));
 	    }
 
 		// Get the mouse's coordinates
@@ -78,68 +78,68 @@ public class RTSCameraMovement : MonoBehaviour {
         }
 
 		// Check that there is a current camera and then transform it to the new vector
-	    if(Camera.main != null){
-	        Camera.main.transform.Translate(new Vector3(xAxisValue, yAxisValue, zAxisValue));
+	    if(camera != null){
+	        camera.transform.Translate(new Vector3(xAxisValue, yAxisValue, zAxisValue));
 		}
 
 		// Scrolling Zoom
 		// Scrolling up or down
 		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
             // Clamping
-            if (Camera.main.fieldOfView - ZOOMSPEED > DEFAULTFOV - MAXSCROLL) {
-			 Camera.main.fieldOfView -= ZOOMSPEED;
+            if (camera.fieldOfView - ZOOMSPEED > DEFAULTFOV - MAXSCROLL) {
+				camera.fieldOfView -= ZOOMSPEED;
             } else {
-                Camera.main.fieldOfView = DEFAULTFOV - MAXSCROLL;
+                camera.fieldOfView = DEFAULTFOV - MAXSCROLL;
             }
-			if (Camera.main.transform.eulerAngles.x - ZOOMROTSPEED > DEFAULTZOOM - MAXZOOM) {
-				Camera.main.transform.eulerAngles -= new Vector3(ZOOMROTSPEED, 0, 0);
+			if (camera.transform.eulerAngles.x - ZOOMROTSPEED > DEFAULTZOOM - MAXZOOM) {
+				camera.transform.eulerAngles -= new Vector3(ZOOMROTSPEED, 0, 0);
 			} else {
-				Camera.main.transform.eulerAngles = new Vector3(DEFAULTZOOM - MAXZOOM, 0, 0);
+				camera.transform.eulerAngles = new Vector3(DEFAULTZOOM - MAXZOOM, camera.transform.eulerAngles.y, camera.transform.eulerAngles.z);
 			}
 		} else if (Input.GetAxis("Mouse ScrollWheel") < 0) {
             // Clamping
-            if (Camera.main.fieldOfView + ZOOMSPEED < DEFAULTFOV) {
-				Camera.main.fieldOfView += ZOOMSPEED;
+            if (camera.fieldOfView + ZOOMSPEED < DEFAULTFOV) {
+				camera.fieldOfView += ZOOMSPEED;
             } else {
-                Camera.main.fieldOfView = DEFAULTFOV;
+                camera.fieldOfView = DEFAULTFOV;
             }
-			if (Camera.main.transform.eulerAngles.x + ZOOMROTSPEED < DEFAULTZOOM) {
-				Camera.main.transform.eulerAngles += new Vector3(ZOOMROTSPEED, 0, 0);
+			if (camera.transform.eulerAngles.x + ZOOMROTSPEED < DEFAULTZOOM) {
+				camera.transform.eulerAngles += new Vector3(ZOOMROTSPEED, 0, 0);
 			} else {
-				Camera.main.transform.eulerAngles = new Vector3(DEFAULTZOOM, 0, 0);
+				camera.transform.eulerAngles = new Vector3(DEFAULTZOOM, camera.transform.eulerAngles.y, camera.transform.eulerAngles.z);
 			}
 		}
 		
 		// Angle Left and Right
 		if (Input.GetKey(ANGLELEFTKEY) && !Input.GetKey(ANGLERIGHTKEY)) {
 			//Clamping
-			if (Camera.main.transform.eulerAngles.y - ROTSPEED > DEFAULTROT - MAXROT) {
-				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y - ROTSPEED, Camera.main.transform.eulerAngles.z);
+			if (camera.transform.eulerAngles.y - ROTSPEED > DEFAULTROT - MAXROT) {
+				camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, camera.transform.eulerAngles.y - ROTSPEED, camera.transform.eulerAngles.z);
 			} else {
-				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT - MAXROT, Camera.main.transform.eulerAngles.z);
+				camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, DEFAULTROT - MAXROT, camera.transform.eulerAngles.z);
 			}
 		} else if (Input.GetKey(ANGLERIGHTKEY) && !Input.GetKey(ANGLELEFTKEY)) {
 			//Clamping
-			if (Camera.main.transform.eulerAngles.y + ROTSPEED < DEFAULTROT + MAXROT) {
-				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + ROTSPEED, Camera.main.transform.eulerAngles.z);
+			if (camera.transform.eulerAngles.y + ROTSPEED < DEFAULTROT + MAXROT) {
+				camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, camera.transform.eulerAngles.y + ROTSPEED, camera.transform.eulerAngles.z);
 			} else {
-				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT + MAXROT, Camera.main.transform.eulerAngles.z);
+				camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, DEFAULTROT + MAXROT, camera.transform.eulerAngles.z);
 			}
-		} else if (!Input.GetKey(ANGLELEFTKEY) && !Input.GetKey(ANGLERIGHTKEY)) {
+		} else if (!Input.GetKey(ANGLELEFTKEY) && !Input.GetKey(ANGLERIGHTKEY) && camera.transform.eulerAngles.y != DEFAULTROT) {
 			// Return back to default rotation angle
-			if (Camera.main.transform.eulerAngles.y < DEFAULTROT) {
+			if (camera.transform.eulerAngles.y < DEFAULTROT) {
 				// Clamping
-				if (Camera.main.transform.eulerAngles.y + ROTSPEED < DEFAULTROT) {
-					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + ROTSPEED, Camera.main.transform.eulerAngles.z);
+				if (camera.transform.eulerAngles.y + ROTSPEED < DEFAULTROT) {
+					camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, camera.transform.eulerAngles.y + ROTSPEED, camera.transform.eulerAngles.z);
 				} else {
-					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT, Camera.main.transform.eulerAngles.z);
+					camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, DEFAULTROT, camera.transform.eulerAngles.z);
 				}
-			} else if (Camera.main.transform.eulerAngles.y > DEFAULTROT) {
+			} else if (camera.transform.eulerAngles.y > DEFAULTROT) {
 				// Clamping
-				if (Camera.main.transform.eulerAngles.y - ROTSPEED > DEFAULTROT) {
-					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y - ROTSPEED, Camera.main.transform.eulerAngles.z);
+				if (camera.transform.eulerAngles.y - ROTSPEED > DEFAULTROT) {
+					camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, camera.transform.eulerAngles.y - ROTSPEED, camera.transform.eulerAngles.z);
 				} else {
-					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT, Camera.main.transform.eulerAngles.z);
+					camera.transform.eulerAngles = new Vector3(camera.transform.eulerAngles.x, DEFAULTROT, camera.transform.eulerAngles.z);
 				}
 			}
 		}

@@ -12,6 +12,7 @@ using UnityEngine;
 using System.Collections;
 
 public class RTSUnitSelection : MonoBehaviour {
+    public static bool Unselect = false;
 	public GameObject SelectionBox = null;
 	private GameObject SelectionBoxInstance = null;
 	private Vector3 Corner;
@@ -42,6 +43,9 @@ public class RTSUnitSelection : MonoBehaviour {
 	}
 	
 	void OnMouseUp() {
+        Unselect = (RTSSelectableUnit.HighlightedUnits == 0);
+        RTSSelectableUnit.HighlightedUnits = 0;
+
 		// Destroy the selection box so it doesn't linger on screen
 		GameObject.DestroyObject(SelectionBoxInstance);
 	}

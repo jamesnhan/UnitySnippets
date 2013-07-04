@@ -2,10 +2,12 @@
  * Name: RTS Camera Movement
  * Author: James 'Sevion' Nhan
  * Date: 02/07/2013
- * Version: 1.0.0.1
+ * Version: 1.0.1.0
  * Description:
  * 		This is a simple RTS movement script that handles
  * 		arrow keys, mouse edge, and scroll wheel zooming.
+ * 		Also supports rotating the camera with Insert and
+ * 		Delete.
  */
 
 using UnityEngine;
@@ -14,13 +16,22 @@ using System.Collections;
 public class RTSCameraMovement : MonoBehaviour {
 	public const int SCROLLDISTANCE = 5;
 	public const float SCROLLSPEED = 1.0f;
-	public const float ZOOMSPEED = 50.0f;
-    public const float ZOOMROTSPEED = 5.0f;
+	public const float ZOOMSPEED = 5.0f;
+    public const float ZOOMROTSPEED = 4.0f;
+	public const float ROTSPEED = 5.0f;
 	public const float MAXSCROLL = 50.0f;
+	public const float MAXZOOM = 40.0f;
+	public const float MAXROT = 90.0f;
 	private float DEFAULTFOV = 0.0f;
+	private float DEFAULTROT = 0.0f;
+	private float DEFAULTZOOM;
+	private const KeyCode ANGLELEFTKEY = KeyCode.Insert;
+	private const KeyCode ANGLERIGHTKEY = KeyCode.Delete;
 
 	void Start() {
 		DEFAULTFOV = Camera.main.fieldOfView;
+		DEFAULTZOOM = Camera.main.transform.eulerAngles.x;
+		DEFAULTROT = Camera.main.transform.eulerAngles.y;
 	}
 
 	// Update is called once per frame
@@ -74,28 +85,62 @@ public class RTSCameraMovement : MonoBehaviour {
 		// Scrolling Zoom
 		// Scrolling up or down
 		if (Input.GetAxis("Mouse ScrollWheel") > 0) {
-			// If it's in the zoom range, then allow to zoom else set to min zoom
-			if (Camera.main.fieldOfView > DEFAULTFOV - MAXSCROLL) {
-                // Clamping
-                if (Camera.main.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * ZOOMSPEED >= DEFAULTFOV - MAXSCROLL) {
-				    Camera.main.fieldOfView -= Input.GetAxis("Mouse ScrollWheel") * ZOOMSPEED;
-                } else {
-                    Camera.main.fieldOfView = DEFAULTFOV - MAXSCROLL;
-                }
+            // Clamping
+            if (Camera.main.fieldOfView - ZOOMSPEED > DEFAULTFOV - MAXSCROLL) {
+			 Camera.main.fieldOfView -= ZOOMSPEED;
+            } else {
+                Camera.main.fieldOfView = DEFAULTFOV - MAXSCROLL;
+            }
+			if (Camera.main.transform.eulerAngles.x - ZOOMROTSPEED > DEFAULTZOOM - MAXZOOM) {
+				Camera.main.transform.eulerAngles -= new Vector3(ZOOMROTSPEED, 0, 0);
 			} else {
-				Camera.main.fieldOfView = DEFAULTFOV - MAXSCROLL;
+				Camera.main.transform.eulerAngles = new Vector3(DEFAULTZOOM - MAXZOOM, 0, 0);
 			}
-		} else {
-			// If it's in the zoom range, then allow to zoom else set to max zoom
-			if (Camera.main.fieldOfView < DEFAULTFOV) {
-                // Clamping
-                if (Camera.main.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * ZOOMSPEED <= DEFAULTFOV) {
-				    Camera.main.fieldOfView -= Input.GetAxis("Mouse ScrollWheel") * ZOOMSPEED;
-                } else {
-                    Camera.main.fieldOfView = DEFAULTFOV;
-                }
+		} else if (Input.GetAxis("Mouse ScrollWheel") < 0) {
+            // Clamping
+            if (Camera.main.fieldOfView + ZOOMSPEED < DEFAULTFOV) {
+				Camera.main.fieldOfView += ZOOMSPEED;
+            } else {
+                Camera.main.fieldOfView = DEFAULTFOV;
+            }
+			if (Camera.main.transform.eulerAngles.x + ZOOMROTSPEED < DEFAULTZOOM) {
+				Camera.main.transform.eulerAngles += new Vector3(ZOOMROTSPEED, 0, 0);
 			} else {
-				Camera.main.fieldOfView = DEFAULTFOV;
+				Camera.main.transform.eulerAngles = new Vector3(DEFAULTZOOM, 0, 0);
+			}
+		}
+		
+		// Angle Left and Right
+		if (Input.GetKey(ANGLELEFTKEY) && !Input.GetKey(ANGLERIGHTKEY)) {
+			//Clamping
+			if (Camera.main.transform.eulerAngles.y - ROTSPEED > DEFAULTROT - MAXROT) {
+				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y - ROTSPEED, Camera.main.transform.eulerAngles.z);
+			} else {
+				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT - MAXROT, Camera.main.transform.eulerAngles.z);
+			}
+		} else if (Input.GetKey(ANGLERIGHTKEY) && !Input.GetKey(ANGLELEFTKEY)) {
+			//Clamping
+			if (Camera.main.transform.eulerAngles.y + ROTSPEED < DEFAULTROT + MAXROT) {
+				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + ROTSPEED, Camera.main.transform.eulerAngles.z);
+			} else {
+				Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT + MAXROT, Camera.main.transform.eulerAngles.z);
+			}
+		} else if (!Input.GetKey(ANGLELEFTKEY) && !Input.GetKey(ANGLERIGHTKEY)) {
+			// Return back to default rotation angle
+			if (Camera.main.transform.eulerAngles.y < DEFAULTROT) {
+				// Clamping
+				if (Camera.main.transform.eulerAngles.y + ROTSPEED < DEFAULTROT) {
+					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + ROTSPEED, Camera.main.transform.eulerAngles.z);
+				} else {
+					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT, Camera.main.transform.eulerAngles.z);
+				}
+			} else if (Camera.main.transform.eulerAngles.y > DEFAULTROT) {
+				// Clamping
+				if (Camera.main.transform.eulerAngles.y - ROTSPEED > DEFAULTROT) {
+					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y - ROTSPEED, Camera.main.transform.eulerAngles.z);
+				} else {
+					Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, DEFAULTROT, Camera.main.transform.eulerAngles.z);
+				}
 			}
 		}
 	}

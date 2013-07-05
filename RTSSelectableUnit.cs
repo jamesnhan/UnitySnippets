@@ -22,6 +22,17 @@ public class RTSSelectableUnit : MonoBehaviour {
 		UnitManager = GameObject.FindWithTag("UnitManager").GetComponent<RTSUnitSelectionManager>();
 	}
 
+    void OnMouseUpAsButton() {
+        // If the Selection Circle doesn't exist, create it at the unit
+        if (SelectionCircleInstance == null) {
+            SelectionCircleInstance = GameObject.Instantiate(SelectionCircle, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - gameObject.transform.localScale.y / 2 + 0.01f, gameObject.transform.position.z), Quaternion.identity) as GameObject;
+            // Parent it to the unit so it follows it
+            SelectionCircleInstance.transform.parent = gameObject.transform;
+        }
+        // Select the unit
+        UnitManager.SelectUnit(gameObject);
+    }
+
     void OnTriggerEnter(Collider col) {
         // This keeps track of the number of units currently highlighted
         HighlightedUnits++;

@@ -14,6 +14,10 @@ using System.Collections.Generic;
 
 public class RTSUnitSelectionManager : MonoBehaviour {
 	private List<GameObject> SelectedObjects;
+
+    void Start() {
+        SelectedObjects = new List<GameObject>();
+    }
 	
 	public GameObject[] GetSelectedObjects() {
 		return SelectedObjects.ToArray();
